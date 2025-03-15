@@ -11,9 +11,18 @@ public class Player : MonoBehaviour
     public Transform groundTransform;
     public float groundDistance = 0.4f;
     public LayerMask Ground;
-    
+    public Rigidbody objectToSpawn; // Placeholder
     Vector3 velocity; // fall velocity
     bool isGrounded;
+   
+    enum moveState
+    {
+    	Prone,
+    	Walk,
+    	Run
+    }
+    private moveState Movement;
+    
     void Start()
     {
         characterController = GetComponent<CharacterController>(); // define component
@@ -23,22 +32,32 @@ public class Player : MonoBehaviour
     void Update()
     {
     	isGrounded = Physics.CheckSphere(groundTransform.position, groundDistance, Ground); // make a sphere at target by offset distance, mask optional
+    	if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Movement = moveState.Run;
+        }
+        else
+        {
+            Movement = moveState.Walk;
+        }
+
     	if (isGrounded && velocity.y < 0)
     	{
-    		Debug.Log(isGrounded);
-    		velocity.y = -2f;
+    		velocity.y = 0f;
     	}
     	
 	if (isGrounded && Input.GetKeyUp(KeyCode.Space))
 	{
 		velocity.y = Mathf.Sqrt(jump * -2f * gravity);
+        Rigidbody spawnedObject;
+        spawnedObject = Instantiate(objectToSpawn, transform.position, transform.rotation) as Rigidbody;
 	}
 	
     	float x = Input.GetAxis("Horizontal");
     	float z = Input.GetAxis("Vertical");
         Vector3 move = ((transform.right * x + transform.forward * z) * Time.deltaTime); // it assumes that y is 0 as transform right and transform forward is x & z, adding them together would combine both vectors
         velocity.y += gravity * Time.deltaTime;
-        characterController.Move(move * speed);
+        characterController.Move(move * (Movement == moveState.Walk ? speed : speed*4));
         characterController.Move(velocity);
     }
 }
