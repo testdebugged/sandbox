@@ -7,20 +7,29 @@ public class Player : MonoBehaviour
     public float speed = 1f;
     public float gravity = -1.81f;
     public float jump = 1f;
-    public float forceMultiplier = 10f; // for dragging objects
+    public int health = 100;
+
     public Transform groundTransform;
     public float groundDistance = 0.4f;
+    public bool noclip = false; // not really no-clip
+    public bool godmode = false; // use in conjunction of hp
 
     public LayerMask GroundLayer;
     public LayerMask RayLayer;
     public Camera PlayerCamera;
-    public GameObject Axis;
 
     Vector3 velocity; // fall velocity
-    bool isGrounded;
-    private Rigidbody selectedObject; // for dragging obj?
+    bool isGrounded; 
+    private Rigidbody selectedObject; // to delete
+    public GameObject prefabObject;// to delete
+    public EventManager EventManager;
 
-    public GameObject prefabObject;
+    enum playerTools {
+        None = 0,
+        Drag = 1,
+        Spawn = 2
+    }
+    private playerTools tool = playerTools.None;
    
     enum moveState
     {
@@ -39,12 +48,18 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    	isGrounded = Physics.CheckSphere(groundTransform.position, groundDistance, GroundLayer); // make a sphere at target by offset distance, mask optional
-    	if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
+        if (!noclip) {
+    	    isGrounded = Physics.CheckSphere(groundTransform.position, groundDistance, GroundLayer); // make a sphere at target by offset distance, mask optional
+        }
+        else
+        {
+            isGrounded = true;
+        }
+        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
         {
             Movement = moveState.Run;
         }
-        else if (isGrounded)
+        else if (isGrounded && !noclip)
         {
             Movement = moveState.Walk;
         }
@@ -60,24 +75,54 @@ public class Player : MonoBehaviour
         
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-        Vector3 move = ((transform.right * x + transform.forward * z) * Time.deltaTime); // it assumes that y is 0 as transform right and transform forward is x & z, adding them together would combine both vectors
-        
-        if (isGrounded && Input.GetKeyUp(KeyCode.Space)) 
-        {
-            velocity.y = Mathf.Sqrt(jump * -2f * gravity);
-            // velocity.x = move.x * speed * Mathf.Abs(gravity);
-            // velocity.z = move.z * speed * Mathf.Abs(gravity);
+
+        Vector3 move; // declaration
+        if (!noclip) {
+            move = ((transform.right * x + transform.forward * z) * Time.deltaTime); // it assumes that y is 0 as transform right and transform forward is x & z, adding them together would combine both vectors
         }
-        velocity.y += gravity * Time.deltaTime;
-        if (true)//Movement != moveState.Jump)
+        else
         {
-            characterController.Move(move * (Movement == moveState.Run ? speed*4 : speed)); // ternary
-        } 
+            move = ((PlayerCamera.transform.right * x + PlayerCamera.transform.forward * z) * Time.deltaTime);
+        }
+
+        if (!noclip) {
+            if (isGrounded && Input.GetKeyUp(KeyCode.Space)) 
+            {
+                velocity.y = Mathf.Sqrt(jump * -2f * gravity);
+                // velocity.x = move.x * speed * Mathf.Abs(gravity);
+                // velocity.z = move.z * speed * Mathf.Abs(gravity);
+            }
+            velocity.y += gravity * Time.deltaTime;
+        }
+        else
+        {
+            velocity.y = Input.GetKeyUp(KeyCode.Space) ? 1f * speed * Time.deltaTime : 0f;
+        }
+
+        characterController.Move(move * (Movement == moveState.Run ? speed*4 : speed)); // ternary
         characterController.Move(velocity);
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            instantiateObject();
+            switch (tool)
+            {
+                case playerTools.None:
+                    tool = playerTools.Drag;
+                    Debug.Log("drag");
+                    break;
+                case playerTools.Drag:
+                    tool = playerTools.Spawn;
+                    Debug.Log("spawn");
+                    break;
+                case playerTools.Spawn:
+                    tool = playerTools.None;
+                    Debug.Log("none");
+                    break;
+                default:
+                    Debug.Log("Unknown");
+                    break;
+            }
+            //instantiateObject();
             // #nullable disable
             // RaycastHit spawnLocation = emitRay();
             // if (spawnLocation != null) {
@@ -85,17 +130,12 @@ public class Player : MonoBehaviour
             // }
             // #nullable enable
         }
-        if (Input.GetKeyUp(KeyCode.Mouse1))
+        if (Input.GetKey(KeyCode.Mouse1))
         {
-            dragObject();
+            
         }
 
-        if (selectedObject != null)
-        {
-            float forceStrength = Vector3.Distance(Axis.transform.position, selectedObject.transform.position); //Mathf.Atan2(Axis.transform.position.x - selectedObject.transform.position.x, Axis.transform.position.y - selectedObject.transform.position.y);
-            Vector3 resultantForce = ((Axis.transform.position - selectedObject.transform.position).normalized * forceStrength) * forceMultiplier;
-            selectedObject.AddForce(resultantForce);
-        }
+
     }
 
     void instantiateObject(float _range = Mathf.Infinity)
@@ -107,20 +147,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void dragObject(float _range = Mathf.Infinity)
-    {
-        RaycastHit hit;
-        if(Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, _range))
-        {
-            if (hit.rigidbody)
-            {
-                selectedObject = hit.rigidbody;
-                Debug.Log(selectedObject.GetComponent<Rigidbody>());
-                return;
-            }
-        }
-        selectedObject = null;
-    }
+
 
     // RaycastHit emitRay(float _range = Mathf.Infinity)
     // {
