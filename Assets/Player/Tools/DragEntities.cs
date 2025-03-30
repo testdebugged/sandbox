@@ -14,13 +14,13 @@ public class DragEntities : MonoBehaviour
     {
         if (selectedObject != null)
         {
-            float forceStrength = Vector3.Distance(transform.position, selectedObject.transform.position); //Mathf.Atan2(Axis.transform.position.x - selectedObject.transform.position.x, Axis.transform.position.y - selectedObject.transform.position.y);
-            Vector3 resultantForce = ((transform.position - selectedObject.transform.position).normalized * forceStrength) * forceMultiplier;
+            float forceStrength = Vector3.Distance(this.transform.position, selectedObject.transform.position); //Mathf.Atan2(Axis.transform.position.x - selectedObject.transform.position.x, Axis.transform.position.y - selectedObject.transform.position.y);
+            Vector3 resultantForce = ((this.transform.position - selectedObject.transform.position).normalized * forceStrength) * forceMultiplier;
             selectedObject.AddForce(resultantForce);
         }
     }
 
-    void mouseClicked()
+    public void mouseClicked()
     {
         dragObject();
     }    
@@ -36,6 +36,12 @@ public class DragEntities : MonoBehaviour
                 return;
             }
         }
+        Debug.Log("unselect");
+        selectedObject = null;
+    }
+
+    public void reset()
+    {
         selectedObject = null;
     }
 }

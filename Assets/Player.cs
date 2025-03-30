@@ -104,24 +104,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            switch (tool)
-            {
-                case playerTools.None:
-                    tool = playerTools.Drag;
-                    Debug.Log("drag");
-                    break;
-                case playerTools.Drag:
-                    tool = playerTools.Spawn;
-                    Debug.Log("spawn");
-                    break;
-                case playerTools.Spawn:
-                    tool = playerTools.None;
-                    Debug.Log("none");
-                    break;
-                default:
-                    Debug.Log("Unknown");
-                    break;
-            }
+            nextTool();
             //instantiateObject();
             // #nullable disable
             // RaycastHit spawnLocation = emitRay();
@@ -132,12 +115,46 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Mouse1))
         {
-            
+            selectTool();
         }
 
 
     }
 
+    void nextTool() // streamline between tools
+    {
+        switch (tool)
+        {
+            case playerTools.None:
+                tool = playerTools.Drag;
+                Debug.Log("drag");
+                break;
+            case playerTools.Drag:
+                tool = playerTools.Spawn;
+                Debug.Log("spawn");
+                break;
+            case playerTools.Spawn:
+                tool = playerTools.None;
+                Debug.Log("none");
+                break;
+            default:
+                Debug.Log("Unknown");
+                break;
+        }
+    }
+
+    void selectTool() // OR use tool
+    {
+        switch (tool)
+        {
+            case playerTools.None:
+                break;
+            case playerTools.Drag:
+                EventManager.execute(1);
+                break;
+            
+        }
+    }
     void instantiateObject(float _range = Mathf.Infinity)
     {
         RaycastHit hit;
