@@ -27,7 +27,8 @@ public class Player : MonoBehaviour
     enum playerTools {
         None = 0,
         Drag = 1,
-        Spawn = 2
+        Spawn = 2,
+        Delete = 3
     }
     private playerTools tool = playerTools.None;
    
@@ -113,7 +114,7 @@ public class Player : MonoBehaviour
             // }
             // #nullable enable
         }
-        if (Input.GetKey(KeyCode.Mouse1))
+        if (Input.GetKeyUp(KeyCode.Mouse1))
         {
             selectTool();
         }
@@ -151,6 +152,9 @@ public class Player : MonoBehaviour
                 break;
             case playerTools.Drag:
                 EventManager.execute(1);
+                break;
+            case playerTools.Spawn:
+                EventManager.execute(2);
                 break;
             
         }

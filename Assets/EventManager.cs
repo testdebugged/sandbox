@@ -22,12 +22,17 @@ public class EventManager : MonoBehaviour
             case 1:
                 DragScript.mouseClicked(); //drag
                 break;
+            case 2:
+                SpawnScript.mouseClicked();
+                break;
+            case 3:
+                break;
         } 
     }
     public void resetTools() // reset variables tool
     {
         DragScript.reset();
-        // SpawnScript.reset();
+        SpawnScript.reset();
         // DeleteScript.reset();
     }
 }

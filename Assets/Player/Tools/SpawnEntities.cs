@@ -11,12 +11,6 @@ public class SpawnEntities : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void mouseClicked()
     {
         instantiateObject();
@@ -28,5 +22,9 @@ public class SpawnEntities : MonoBehaviour
         {
             Instantiate(prefabObject, hit.point, PlayerCamera.transform.rotation);
         }
+        Debug.Log(hit);
+    }
+    public void reset() {
+        Debug.Log("res");
     }
 }
