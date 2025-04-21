@@ -20,8 +20,6 @@ public class Player : MonoBehaviour
 
     Vector3 velocity; // fall velocity
     bool isGrounded; 
-    private Rigidbody selectedObject; // to delete
-    public GameObject prefabObject;// to delete
     public EventManager EventManager;
 
     enum playerTools {
@@ -135,6 +133,10 @@ public class Player : MonoBehaviour
                 Debug.Log("spawn");
                 break;
             case playerTools.Spawn:
+                tool = playerTools.Delete;
+                Debug.Log("delete");
+                break;
+            case playerTools.Delete:
                 tool = playerTools.None;
                 Debug.Log("none");
                 break;
@@ -146,6 +148,7 @@ public class Player : MonoBehaviour
 
     void selectTool() // OR use tool
     {
+        EventManager.resetTools();
         switch (tool)
         {
             case playerTools.None:
@@ -156,17 +159,20 @@ public class Player : MonoBehaviour
             case playerTools.Spawn:
                 EventManager.execute(2);
                 break;
+            case playerTools.Delete:
+                EventManager.execute(3);
+                break;
             
         }
     }
-    void instantiateObject(float _range = Mathf.Infinity)
-    {
-        RaycastHit hit;
-        if(Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, _range))
-        {
-            Instantiate(prefabObject, hit.point, PlayerCamera.transform.rotation);
-        }
-    }
+    // void instantiateObject(float _range = Mathf.Infinity)
+    // {
+    //     RaycastHit hit;
+    //     if(Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out hit, _range))
+    //     {
+    //         Instantiate(prefabObject, hit.point, PlayerCamera.transform.rotation);
+    //     }
+    // }
 
 
 
