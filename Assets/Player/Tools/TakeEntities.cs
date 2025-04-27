@@ -1,14 +1,11 @@
 using UnityEngine;
 
-public class DragEntities : MonoBehaviour
+public class TakeEntities : MonoBehaviour
 {
     public GameObject Player;
     public Camera PlayerCamera;
     bool _enabled = false;
     Rigidbody selectedObject;
-
-    public float forceMultiplier = 10f; // for dragging objects
-    // Update is called once per frame
 
     void Start()
     {
@@ -19,14 +16,14 @@ public class DragEntities : MonoBehaviour
     
     void Update()
     {
-        LineRenderer lineRenderer = GetComponent<LineRenderer>();
         if (enabled) {
+            LineRenderer lineRenderer = GetComponent<LineRenderer>();
             if (selectedObject != null)
             {
                 lineRenderer.enabled = true;
-                float forceStrength = Vector3.Distance(this.transform.position, selectedObject.transform.position); //Mathf.Atan2(Axis.transform.position.x - selectedObject.transform.position.x, Axis.transform.position.y - selectedObject.transform.position.y);
-                Vector3 resultantForce = ((this.transform.position - selectedObject.transform.position).normalized * forceStrength) * forceMultiplier;
-                selectedObject.AddForce(resultantForce);
+
+                selectedObject.transform.position = this.transform.position;
+                selectedObject.linearVelocity = new Vector3(0,0,0);
                 lineRenderer.SetPosition(0, this.transform.position);
                 lineRenderer.SetPosition(1, selectedObject.transform.position);
             }
@@ -49,13 +46,18 @@ public class DragEntities : MonoBehaviour
         {
             if (hit.rigidbody)
             {
+                if (selectedObject != null) {
+                    if (hit.rigidbody == selectedObject.GetComponent<Rigidbody>())
+                    {
+                        selectedObject = null;
+                        return;
+                    }
+                }
                 selectedObject = hit.rigidbody;
                 Debug.Log(selectedObject.GetComponent<Rigidbody>());
                 return;
             }
         }
-        Debug.Log("unselect");
-        selectedObject = null;
     }
 
     public void reset()

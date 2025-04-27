@@ -1,5 +1,7 @@
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class EventManager : MonoBehaviour
 {
@@ -12,7 +14,9 @@ public class EventManager : MonoBehaviour
     public DragEntities DragScript;
     public SpawnEntities SpawnScript; // obj to spawn should be decided from player monobehaviour
     public DeleteEntities DeleteScript;
+    public TakeEntities GrabScript;
     public Camera playerCamera;
+    int value = 0;
     public void execute(int value = 0)
     {
         switch (value)
@@ -28,6 +32,9 @@ public class EventManager : MonoBehaviour
             case 3:
                 DeleteScript.mouseClicked();
                 break;
+            case 4:
+                GrabScript.mouseClicked();
+                break;
         } 
     }
     public void resetTools() // reset variables tool
@@ -35,5 +42,6 @@ public class EventManager : MonoBehaviour
         DragScript.reset();
         SpawnScript.reset();
         DeleteScript.reset();
+        GrabScript.reset();
     }
 }

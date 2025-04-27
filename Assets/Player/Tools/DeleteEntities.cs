@@ -4,14 +4,10 @@ public class DeleteEntities : MonoBehaviour
 {
     public Camera PlayerCamera;
     public LayerMask RayLayer;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
+    bool _enabled = false; // eventmanager
     public void mouseClicked()
     {
+        _enabled = true;
         deleteObject();
     }
     void deleteObject(float _range = Mathf.Infinity)
@@ -26,6 +22,6 @@ public class DeleteEntities : MonoBehaviour
         return;
     }
     public void reset() {
-        Debug.Log("res");
+        _enabled = false;
     }
 }

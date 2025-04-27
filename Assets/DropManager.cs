@@ -8,10 +8,10 @@ public class DropManager : MonoBehaviour
     public GameObject selectPrefab(int select) {
         pagination += (select > .1 ? 1 : -1);
         if (0 > pagination) {
-            pagination = 0; // restart/cycle back
+            pagination = prefabList.Count-1; // restart/cycle back
         }
         if ((prefabList.Count-1) < pagination) {
-            pagination = prefabList.Count-1; // restart/cycle back
+            pagination = 0; // restart/cycle back
         }
         print(prefabList[pagination]);
         return prefabList[pagination];

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class Player : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -17,6 +18,8 @@ public class Player : MonoBehaviour
     public LayerMask GroundLayer;
     public LayerMask RayLayer;
     public Camera PlayerCamera;
+    public TextManager selection;
+
 
     Vector3 velocity; // fall velocity
     bool isGrounded; 
@@ -26,7 +29,8 @@ public class Player : MonoBehaviour
         None = 0,
         Drag = 1,
         Spawn = 2,
-        Delete = 3
+        Delete = 3,
+        Grab = 4
     }
     private playerTools tool = playerTools.None;
    
@@ -47,6 +51,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        selection.write(tool.ToString());
         if (!noclip) {
     	    isGrounded = Physics.CheckSphere(groundTransform.position, groundDistance, GroundLayer); // make a sphere at target by offset distance, mask optional
         }
@@ -101,7 +106,7 @@ public class Player : MonoBehaviour
         characterController.Move(move * (Movement == moveState.Run ? speed*4 : speed)); // ternary
         characterController.Move(velocity);
 
-        if (Input.GetKeyUp(KeyCode.Mouse0))
+        if (Input.GetKeyUp(KeyCode.Mouse1))
         {
             nextTool();
             //instantiateObject();
@@ -112,7 +117,7 @@ public class Player : MonoBehaviour
             // }
             // #nullable enable
         }
-        if (Input.GetKeyUp(KeyCode.Mouse1))
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             selectTool();
         }
@@ -122,6 +127,7 @@ public class Player : MonoBehaviour
 
     void nextTool() // streamline between tools
     {
+        EventManager.resetTools(); // switcharoo
         switch (tool)
         {
             case playerTools.None:
@@ -137,8 +143,12 @@ public class Player : MonoBehaviour
                 Debug.Log("delete");
                 break;
             case playerTools.Delete:
+                tool = playerTools.Grab;
+                Debug.Log("take");
+                break;
+            case playerTools.Grab:
                 tool = playerTools.None;
-                Debug.Log("none");
+                Debug.Log("nome");
                 break;
             default:
                 Debug.Log("Unknown");
@@ -148,7 +158,7 @@ public class Player : MonoBehaviour
 
     void selectTool() // OR use tool
     {
-        EventManager.resetTools();
+        selection.visible(false, 1.0f);
         switch (tool)
         {
             case playerTools.None:
@@ -161,6 +171,9 @@ public class Player : MonoBehaviour
                 break;
             case playerTools.Delete:
                 EventManager.execute(3);
+                break;
+            case playerTools.Grab:
+                EventManager.execute(4);
                 break;
             
         }
