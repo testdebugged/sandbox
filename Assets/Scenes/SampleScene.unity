@@ -1199,6 +1199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delay: 0
+  startHidden: 1
   overrideDelay: 1
   pair: {fileID: 0}
 --- !u!1 &1009787646
@@ -1581,6 +1582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delay: 0
+  startHidden: 1
   overrideDelay: 1
   pair: {fileID: 0}
 --- !u!1 &1742376099

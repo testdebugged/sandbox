@@ -17,7 +17,7 @@ public class TextManager : MonoBehaviour
     void Start()
     {
         text_m = GetComponent<TextMeshProUGUI>();
-        this.gameObject.SetActive(!startHidden);
+        visible(!startHidden, 0.0f);
         //_self = GetComponent<TextMeshPro>();
     }
 
@@ -25,14 +25,13 @@ public class TextManager : MonoBehaviour
     void Update()
     {
         timeElasped += Time.deltaTime;
-        Debug.Log(timeElasped);
         if (shouldHide && delay < timeElasped)
         {
-            this.gameObject.SetActive(false);
+            text_m.enabled = false;
         }
         else
         {
-            this.gameObject.SetActive(true);
+            text_m.enabled = true;
         }
     }
 

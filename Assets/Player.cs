@@ -51,7 +51,6 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        selection.write(tool.ToString());
         if (!noclip) {
     	    isGrounded = Physics.CheckSphere(groundTransform.position, groundDistance, GroundLayer); // make a sphere at target by offset distance, mask optional
         }
@@ -133,22 +132,27 @@ public class Player : MonoBehaviour
             case playerTools.None:
                 tool = playerTools.Drag;
                 Debug.Log("drag");
+                selection.write("Drag");
                 break;
             case playerTools.Drag:
                 tool = playerTools.Spawn;
                 Debug.Log("spawn");
+                selection.write("Spawn");
                 break;
             case playerTools.Spawn:
                 tool = playerTools.Delete;
                 Debug.Log("delete");
+                selection.write("Delete");
                 break;
             case playerTools.Delete:
                 tool = playerTools.Grab;
                 Debug.Log("take");
+                selection.write("Grab");
                 break;
             case playerTools.Grab:
                 tool = playerTools.None;
                 Debug.Log("nome");
+                selection.write("None");
                 break;
             default:
                 Debug.Log("Unknown");
